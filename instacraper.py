@@ -6,7 +6,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver import ActionChains
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 import selenium.webdriver.support.expected_conditions as EC
 
@@ -70,7 +69,7 @@ class InstaPage:
                     return posts
 
             self.browser.execute_script('window.scrollTo(0,document.body.scrollHeight);')
-            time.sleep(3)
+            time.sleep(2)
 
 class InstaPost:
     def __init__(self, id, description):
@@ -85,12 +84,17 @@ def filter_posts_by_desc(posts, *keywords):
     return filter(lambda p: any(k in p.description for k in keywords), posts)
 
 if len(sys.argv) < 5:
-    print('Please provide your username and password'
-          '(ex. app <username> <password>)', file=sys.stderr)
+    print('Usage: <page_id> <bot_uname> <bot_pwd> <post_count> <keywords...>\n\n'
+          'page_id: Instagram account\'s username or id(ex. bbc)\n'
+          'bot_uname: Your instagram account\'s username, email or id\n'
+          'bot_pwd: Your instagram account\'s password\n'
+          'post_count: Number of posts that should be examined\n'
+          'keywords: Any number of keywords to search for in post\'s description(ex. breaking \'breaking news\')',
+          file=sys.stderr)
     sys.exit(1)
 
 options = Options()
-options.add_argument("--headless")
+#options.add_argument("--headless")
 options.add_experimental_option('mobileEmulation', {
     'deviceName': 'iPhone 6 Plus',
 })
