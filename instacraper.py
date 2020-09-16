@@ -1,5 +1,6 @@
 import sys
 import time
+import os
 
 from selenium.webdriver import Chrome
 from selenium.webdriver.common.by import By
@@ -73,13 +74,15 @@ class InstaPage:
 
                             desc = post.find_element(
                                 By.CSS_SELECTOR, 'span[class^="_8Pl3R"]').text
+
+                            posts.append(InstaPost(post_id, desc))
+                            self.visited_posts[post_id] = True
+
                         except NoSuchElementException:
                             pass
                         except StaleElementReferenceException:
                             pass
 
-                        posts.append(InstaPost(post_id, desc))
-                        self.visited_posts[post_id] = True
                 else:
                     return posts
 
@@ -100,7 +103,6 @@ class InstaPost:
 def filter_posts_by_desc(posts, *keywords):
     return filter(lambda p: any(k in p.description for k in keywords), posts)
 
-
 if len(sys.argv) < 5:
     print(
         'Usage: <page_id> <bot_uname> <bot_pwd> <post_count> <keywords...>\n\n'
@@ -114,12 +116,12 @@ if len(sys.argv) < 5:
     sys.exit(1)
 
 options = Options()
-# options.add_argument("--headless")
+options.add_argument("--headless")
 options.add_experimental_option('mobileEmulation', {
     'deviceName': 'iPhone 6 Plus',
 })
 
-with Chrome(options=options) as browser:
+with Chrome(os.path.join(sys._MEIPASS, 'chromedriver'), options=options) as browser:
     wait = WebDriverWait(browser, 10)
     insta = Insta(browser, wait)
 
